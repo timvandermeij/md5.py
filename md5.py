@@ -11,7 +11,8 @@ from bitarray import bitarray
 
 class MD5(object):
     def hash(self, string):
-        return self._step_1(string)
+        step_1_result = self._step_1(string)
+        return self._step_2(string, step_1_result)
 
     def _step_1(self, string):
         # Convert the string to a bit array.
@@ -29,6 +30,17 @@ class MD5(object):
 
         return bit_array
 
+    def _step_2(self, string, step_1_result):
+        # Extend the result from step 1 with a 64-bit little endian
+        # representation of the original message length (modulo 2^64).
+        length = (len(string) * 8) % pow(2, 64)
+        length_bit_array = bitarray()
+        length_bit_array.frombytes(struct.pack("<Q", length))
+
+        result = step_1_result.copy()
+        result.extend(length_bit_array)
+        return result
+
 
 def main():
     argument_parser = ArgumentParser(
@@ -43,7 +55,7 @@ def main():
     arguments = argument_parser.parse_args()
 
     md5 = MD5()
-    print(md5.hash(arguments.string))
+    print([int(byte) for byte in md5.hash(arguments.string).tobytes()])
 
 
 if __name__ == "__main__":
