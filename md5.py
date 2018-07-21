@@ -10,14 +10,18 @@ from bitarray import bitarray
 
 
 class MD5(object):
-    def hash(self, string):
-        step_1_result = self._step_1(string)
-        return self._step_2(string, step_1_result)
+    _string = None
 
-    def _step_1(self, string):
+    @classmethod
+    def hash(cls, string):
+        cls._string = string
+        return cls._step_2(cls._step_1())
+
+    @classmethod
+    def _step_1(cls):
         # Convert the string to a bit array.
         bit_array = bitarray()
-        bit_array.frombytes(string.encode("utf-8"))
+        bit_array.frombytes(cls._string.encode("utf-8"))
 
         # Pad the string with a 1 bit and as many 0 bits required such that
         # the length of the bit array becomes congruent to 448 modulo 512.
@@ -30,10 +34,11 @@ class MD5(object):
 
         return bit_array
 
-    def _step_2(self, string, step_1_result):
+    @classmethod
+    def _step_2(cls, step_1_result):
         # Extend the result from step 1 with a 64-bit little endian
         # representation of the original message length (modulo 2^64).
-        length = (len(string) * 8) % pow(2, 64)
+        length = (len(cls._string) * 8) % pow(2, 64)
         length_bit_array = bitarray()
         length_bit_array.frombytes(struct.pack("<Q", length))
 
@@ -53,9 +58,9 @@ def main():
     )
 
     arguments = argument_parser.parse_args()
+    md5_hash = MD5.hash(arguments.string)
 
-    md5 = MD5()
-    print([int(byte) for byte in md5.hash(arguments.string).tobytes()])
+    print([int(byte) for byte in md5_hash.tobytes()])
 
 
 if __name__ == "__main__":
