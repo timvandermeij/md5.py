@@ -5,17 +5,34 @@ https://www.ietf.org/rfc/rfc1321.txt.
 
 import struct
 from argparse import ArgumentParser
+from enum import Enum
 
 from bitarray import bitarray
 
 
+class MD5Buffer(Enum):
+    A = 0x67452301
+    B = 0xEFCDAB89
+    C = 0x98BADCFE
+    D = 0x10325476
+
+
 class MD5(object):
     _string = None
+    _buffers = {
+        MD5Buffer.A: None,
+        MD5Buffer.B: None,
+        MD5Buffer.C: None,
+        MD5Buffer.D: None,
+    }
 
     @classmethod
     def hash(cls, string):
         cls._string = string
-        return cls._step_2(cls._step_1())
+
+        preprocessed_bit_array = cls._step_2(cls._step_1())
+        cls._step_3()
+        return preprocessed_bit_array
 
     @classmethod
     def _step_1(cls):
@@ -45,6 +62,12 @@ class MD5(object):
         result = step_1_result.copy()
         result.extend(length_bit_array)
         return result
+
+    @classmethod
+    def _step_3(cls):
+        # Initialize the buffers to their default values.
+        for buffer_type in cls._buffers.keys():
+            cls._buffers[buffer_type] = buffer_type.value
 
 
 def main():
