@@ -42,7 +42,7 @@ class MD5(object):
     @classmethod
     def _step_1(cls):
         # Convert the string to a bit array.
-        bit_array = bitarray(endian='big')
+        bit_array = bitarray(endian="big")
         bit_array.frombytes(cls._string.encode("utf-8"))
 
         # Pad the string with a 1 bit and as many 0 bits required such that
@@ -56,14 +56,14 @@ class MD5(object):
 
         # For the remainder of the MD5 algorithm, all values are in
         # little endian, so transform the bit array to little endian.
-        return bitarray(bit_array, endian='little')
+        return bitarray(bit_array, endian="little")
 
     @classmethod
     def _step_2(cls, step_1_result):
         # Extend the result from step 1 with a 64-bit little endian
         # representation of the original message length (modulo 2^64).
         length = (len(cls._string) * 8) % pow(2, 64)
-        length_bit_array = bitarray(endian='little')
+        length_bit_array = bitarray(endian="little")
         length_bit_array.frombytes(struct.pack("<Q", length))
 
         result = step_1_result.copy()
@@ -105,7 +105,7 @@ class MD5(object):
             X = [step_2_result[start + (x * 32) : start + (x * 32) + 32] for x in range(16)]
 
             # Convert the `bitarray` objects to integers.
-            X = [int.from_bytes(word.tobytes(), byteorder='little') for word in X]
+            X = [int.from_bytes(word.tobytes(), byteorder="little") for word in X]
 
             # Make shorthands for the buffers A, B, C and D.
             A = cls._buffers[MD5Buffer.A]
@@ -158,10 +158,10 @@ class MD5(object):
     @classmethod
     def _step_5(cls):
         # Convert the buffers to little-endian.
-        A = struct.unpack('<I', struct.pack('>I', cls._buffers[MD5Buffer.A]))[0]
-        B = struct.unpack('<I', struct.pack('>I', cls._buffers[MD5Buffer.B]))[0]
-        C = struct.unpack('<I', struct.pack('>I', cls._buffers[MD5Buffer.C]))[0]
-        D = struct.unpack('<I', struct.pack('>I', cls._buffers[MD5Buffer.D]))[0]
+        A = struct.unpack("<I", struct.pack(">I", cls._buffers[MD5Buffer.A]))[0]
+        B = struct.unpack("<I", struct.pack(">I", cls._buffers[MD5Buffer.B]))[0]
+        C = struct.unpack("<I", struct.pack(">I", cls._buffers[MD5Buffer.C]))[0]
+        D = struct.unpack("<I", struct.pack(">I", cls._buffers[MD5Buffer.D]))[0]
 
         # Output the buffers in lower-case hexadecimal format.
         return f"{format(A, '08x')}{format(B, '08x')}{format(C, '08x')}{format(D, '08x')}"
