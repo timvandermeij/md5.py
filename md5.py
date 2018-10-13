@@ -5,7 +5,6 @@ https://en.wikipedia.org/wiki/MD5.
 """
 
 import struct
-from argparse import ArgumentParser
 from enum import Enum
 from math import (
     floor,
@@ -166,23 +165,3 @@ class MD5(object):
 
         # Output the buffers in lower-case hexadecimal format.
         return f"{format(A, '08x')}{format(B, '08x')}{format(C, '08x')}{format(D, '08x')}"
-
-
-def main():
-    argument_parser = ArgumentParser(
-        description="Compute the MD5 hash of a given string.",
-    )
-    argument_parser.add_argument(
-        "string",
-        type=str,
-        help="The string to hash",
-    )
-
-    arguments = argument_parser.parse_args()
-    md5_hash = MD5.hash(arguments.string)
-
-    print(md5_hash)
-
-
-if __name__ == "__main__":
-    main()
