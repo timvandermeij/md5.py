@@ -38,7 +38,7 @@ class MD5(object):
         preprocessed_bit_array = cls._step_2(cls._step_1())
         cls._step_3()
         cls._step_4(preprocessed_bit_array)
-        return preprocessed_bit_array
+        return cls._step_5()
 
     @classmethod
     def _step_1(cls):
@@ -156,6 +156,17 @@ class MD5(object):
             cls._buffers[MD5Buffer.C] = modular_add(cls._buffers[MD5Buffer.C], C)
             cls._buffers[MD5Buffer.D] = modular_add(cls._buffers[MD5Buffer.D], D)
 
+    @classmethod
+    def _step_5(cls):
+        # Convert the buffers to little-endian.
+        A = struct.unpack('<I', struct.pack('>I', cls._buffers[MD5Buffer.A]))[0]
+        B = struct.unpack('<I', struct.pack('>I', cls._buffers[MD5Buffer.B]))[0]
+        C = struct.unpack('<I', struct.pack('>I', cls._buffers[MD5Buffer.C]))[0]
+        D = struct.unpack('<I', struct.pack('>I', cls._buffers[MD5Buffer.D]))[0]
+
+        # Output the buffers in lower-case hexadecimal format.
+        return f"{format(A, '08x')}{format(B, '08x')}{format(C, '08x')}{format(D, '08x')}"
+
 
 def main():
     argument_parser = ArgumentParser(
@@ -170,7 +181,7 @@ def main():
     arguments = argument_parser.parse_args()
     md5_hash = MD5.hash(arguments.string)
 
-    print([int(byte) for byte in md5_hash.tobytes()])
+    print(md5_hash)
 
 
 if __name__ == "__main__":
