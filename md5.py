@@ -51,7 +51,7 @@ class MD5(object):
         # length is already conguent to 448 modulo 512, which leads to a
         # new 512-bit message block.
         bit_array.append(1)
-        while bit_array.length() % 512 != 448:
+        while len(bit_array) % 512 != 448:
             bit_array.append(0)
 
         # For the remainder of the MD5 algorithm, all values are in

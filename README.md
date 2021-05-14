@@ -16,7 +16,7 @@ mature libraries and utilities for hashing, such as `md5sum` on Linux.
 Prerequisites
 =============
 
-In order to use the code, you need Python 3.7 and Pipenv. Clone the repository
+In order to use the code, you need Python 3.9 and Pipenv. Clone the repository
 and run the following in the root directory to open a new shell subprocess:
 
     $ pipenv install
