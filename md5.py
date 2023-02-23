@@ -63,7 +63,7 @@ class MD5(object):
         # Extend the result from step 1 with a 64-bit little endian
         # representation of the original message length (modulo 2^64).
         length = (len(cls._string) * 8) % pow(2, 64)
-        length_bit_array = bitarray(endian="little")
+        length_bit_array = bitarray(endian="big")
         length_bit_array.frombytes(struct.pack("<Q", length))
 
         result = step_1_result.copy()
@@ -102,7 +102,7 @@ class MD5(object):
         for chunk_index in range(N // 16):
             # Break the chunk into 16 words of 32 bits in list X.
             start = chunk_index * 512
-            X = [step_2_result[start + (x * 32) : start + (x * 32) + 32] for x in range(16)]
+            X = [bitarray(step_2_result[start + (x * 32) : start + (x * 32) + 32], endian="big") for x in range(16)]
 
             # Convert the `bitarray` objects to integers.
             X = [int.from_bytes(word.tobytes(), byteorder="little") for word in X]
